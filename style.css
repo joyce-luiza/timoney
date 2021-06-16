@@ -343,7 +343,8 @@ img {
   z-index: 10;
 }
 
-.add__form {
+.add__form,
+.edit__form {
   display: flex;
   flex-direction: column;
   width: 100%;

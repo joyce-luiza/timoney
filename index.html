@@ -113,19 +113,9 @@
                 <img src="icons/plus.svg" alt="Adicionar Despesa"/>
               </button>
             </div>
+
             <table class="table table--despesas">
-              <tr>
-                <th>Valor</th>
-                <th>Categoria</th>
-                <th>Data</th>
-                <th>Actions</th>
-              </tr>
-              <tr>
-              </tr>
-              <tr>
-              </tr>
-              <tr>
-              </tr>
+
             </table>
             <a href=""><button class="btn btn--default">Mais Despesas</button></a>
 
@@ -138,27 +128,7 @@
               </button>
             </div>
             <table class="table table--receitas">
-              <tr>
-                <th>Valor</th>
-                <th>Categoria</th>
-                <th>Data</th>
-              </tr>
-              <tr>
-                <td>R$ 45,00</td>
-                <td>Alimentação</td>
-                <td>21/02/2021</td>
 
-              </tr>
-              <tr>
-                <td>R$ 45,00</td>
-                <td>Alimentação</td>
-                <td>21/02/2021</td>
-              </tr>
-              <tr>
-                <td>R$ 45,00</td>
-                <td>Alimentação</td>
-                <td>21/02/2021</td>
-              </tr>
             </table>
             <a href=""><button class="btn btn--default" >Mais Entradas</button></a>
           </div>
@@ -196,82 +166,6 @@
               <p>R$ 5.000,00 / R$ 15.0000,00</p>
             </div>
             <a href=""><button class="btn btn--default">Mais Objetivos</button></a>
-          </div>
-
-          <div class="card modal modal--despesa hidden">
-            <div class="card--title">
-              <h2>Adicionar Despesa</h2>  
-              <button id="btn--close--despesa" class="modal--close">&times;</button>
-            </div>
-              <form action="#" class="add__form">
-
-                <div class="field">
-                  <label  for="value">Valor</label>
-                  <input id="input__despesa--value" type="number">
-                </div>
-
-                <div class="field">  
-                  <label for="payment__date">Data</label>
-                  <input id="input__despesa--payment--date" type="date">
-                </div>
-
-                <div class="field">
-                  <label for="category">Categoria</label>
-                  <select name="category" id="input__despesa--category">
-                    <option value="Alimentação">Alimentação</option>
-                    <option value="Educação">Educação</option>
-                    <option value="Eletrônicos">Eletrônicos</option>
-                    <option value="Lazer">Lazer</option>
-                    <option value="Saúde">Saúde</option>
-                    <option value="Serviços">Serviços</option>
-                    <option value="Supermercado">Supermercado</option>
-                    <option value="Transporte">Transporte</option>
-                    <option value="Vestuário">Vestuário</option>
-                    <option value="Viagem">Viagem</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <label  for="description">Descrição</label>
-                  <input id="input__despesa--description" type="text">
-                </div>
-              </form>
-              <a href=""><button id="btn--add--despesa" class="btn btn--default btn--despesa">Adicionar Despesa</button></a>
-          </div>
-
-          <div class="card modal modal--receita hidden">
-            <div class="card--title">
-              <h2>Adicionar Receita</h2>
-              
-              <button id="btn--close--receita" class="modal--close">&times;</button>
-            </div>
-              <form action="#" class="add__form">
-
-                <div class="field">
-                  <label  for="value">Valor</label>
-                  <input id="input__receita--value" type="number">
-                </div>
-
-                <div class="field">  
-                  <label for="payment__date">Data</label>
-                  <input id="input__receita--payment--date" type="date">
-                </div>
-
-                <div class="field">
-                  <label for="category">Categoria</label>
-                  <select name="category" id="input__receita--category">
-                    <option value="Salário">Salário</option>
-                    <option value="Presente">Presente</option>
-                    <option value="Investimento">Investimento</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <label  for="description">Descrição</label>
-                  <input id="input__receita--description" type="text">
-                </div>
-              </form>
-              <a href=""><button id="btn--add--receita" class="btn btn--default">Adicionar Receita</button></a>
           </div>
         </div>
         </div>
