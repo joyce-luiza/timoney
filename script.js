@@ -22,7 +22,28 @@ navTab.addEventListener("click", onTabClick, false);
 
 const mainDiv = document.querySelector(".app");
 
-const modalTemplate = (name, action, title) => {
+const despesaOptions = `
+<option value="Alimentação">Alimentação</option>
+<option value="Educação">Educação</option>
+<option value="Eletrônicos">Eletrônicos</option>
+<option value="Lazer">Lazer</option>
+<option value="Saúde">Saúde</option>
+<option value="Serviços">Serviços</option>
+<option value="Supermercado">Supermercado</option>
+<option value="Transporte">Transporte</option>
+<option value="Vestuário">Vestuário</option>
+<option value="Viagem">Viagem</option>
+`;
+
+const receitasOptions = `
+  <option value="Investimento">Investimento</option>
+  <option value="Presente">Presente</option>
+  <option value="Bônus">Bônus</option>
+  <option value="Outros">Outros</option>
+
+`;
+
+const modalTemplate = (name, action, title, options) => {
   const modal = `
   <div class="card modal modal--${action}--${name} hidden">
   <div class="card--title">
@@ -44,16 +65,7 @@ const modalTemplate = (name, action, title) => {
       <div class="field">
         <label for="category">Categoria</label>
         <select name="category" id="input__${name}__${action}--category">
-          <option value="Alimentação">Alimentação</option>
-          <option value="Educação">Educação</option>
-          <option value="Eletrônicos">Eletrônicos</option>
-          <option value="Lazer">Lazer</option>
-          <option value="Saúde">Saúde</option>
-          <option value="Serviços">Serviços</option>
-          <option value="Supermercado">Supermercado</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Vestuário">Vestuário</option>
-          <option value="Viagem">Viagem</option>
+          ${options}
         </select>
       </div>
 
@@ -68,22 +80,26 @@ const modalTemplate = (name, action, title) => {
   mainDiv.insertAdjacentHTML("beforeend", modal);
 };
 
-modalTemplate("despesa", "add", "Adicionar");
-modalTemplate("despesa", "edit", "Editar");
+modalTemplate("despesa", "add", "Adicionar", despesaOptions);
+modalTemplate("despesa", "edit", "Editar", despesaOptions);
+
+modalTemplate("receita", "add", "Adicionar", receitasOptions);
+modalTemplate("receita", "edit", "Editar", receitasOptions);
 
 const overlay = document.querySelector(".overlay");
+
+const closeModalBtn = document.querySelectorAll(".modal--close");
 
 // Despesas
 
 const openAddDespesa = document.getElementById("btn--despesa");
-const closeModalBtn = document.querySelectorAll(".modal--close");
 const modalAddDespesa = document.querySelector(".modal--add--despesa");
 const modalEditDespesa = document.querySelector(".modal--edit--despesa");
 
 // Receitas
 const openAddReceita = document.getElementById("btn--receita");
-const closeAddReceita = document.getElementById("btn--close--receita");
-const modalAddReceita = document.querySelector(".modal--receita");
+const modalAddReceita = document.querySelector(".modal--add--receita");
+const modalEditReceita = document.querySelector(".modal--edit--receita");
 
 const openModal = (modal) => {
   modal.classList.remove("hidden");
@@ -100,24 +116,87 @@ const closeModal = (...modals) => {
 openAddDespesa.addEventListener("click", () => openModal(modalAddDespesa));
 closeModalBtn.forEach((btn) =>
   btn.addEventListener("click", () =>
-    closeModal(modalAddDespesa, modalEditDespesa)
+    closeModal(
+      modalAddDespesa,
+      modalEditDespesa,
+      modalAddReceita,
+      modalEditDespesa
+    )
   )
 );
 
 openAddReceita.addEventListener("click", () => openModal(modalAddReceita));
 
+let despesas = [];
+
+let receitas = [];
+
+// Deletar receita/despesa
+const deleteItem = (name, arr) => {
+  let deleteBtns = document.querySelectorAll(`.${name}__delete`);
+  deleteBtns.forEach((btn, i) => {
+    btn.onclick = () => {
+      arr.splice(i, 1);
+      let cells = document.querySelectorAll(`.${name}--${i}`);
+      cells.forEach((cell) => {
+        cell.remove();
+      });
+      displayRow("despesas", "despesa", despesas);
+    };
+  });
+};
+
+// Renderizar tabela de despesas
+const displayRow = (title, name, arr) => {
+  const table = document.querySelector(`.table--${title}`);
+
+  if (arr.length > 0) {
+    table.innerHTML = "";
+    table.innerHTML = `              
+      <tr>
+        <th>Valor</th>
+        <th>Categoria</th>
+        <th>Data</th>
+        <th>Ações</th>
+      </tr>
+      `;
+
+    arr.forEach((item, i) => {
+      let newRow = document.querySelector(`.table--${title}`).insertRow();
+      newRow.innerHTML = `
+                  <td class="${name}--${i}" >R$ ${item.valor}</td>
+                  <td class="${name}--${i}">${item.categoria}</td>
+                  <td class="${name}--${i}">${item.data}</td>
+                  <td class="action__cell ${name}--${i}">
+                    <img class="${name}__edit action__icon" src="icons/pencil.svg"/>
+                    <img class="${name}__delete action__icon" src="icons/close.svg"/>
+                  </td>
+                  `;
+    });
+
+    deleteItem("despesa", despesas);
+    deleteItem("receita", receitas);
+    editDespesa();
+    editReceita();
+  } else {
+    table.style.display = "none";
+  }
+};
+
 /* --- Despesas --- */
 
 // Add inputs
 const btnAddDespesa = document.getElementById("btn--add--despesa");
-const addValorDespesa = document.getElementById("input__despesa__add--value");
-const addDataDespesa = document.getElementById(
+const inputAddValorDespesa = document.getElementById(
+  "input__despesa__add--value"
+);
+const inputAddDataDespesa = document.getElementById(
   "input__despesa__add--payment--date"
 );
-const addCategoriaDespesa = document.getElementById(
+const inputAddCategoriaDespesa = document.getElementById(
   "input__despesa__add--category"
 );
-const addDescricaoDespesa = document.getElementById(
+const inputAddDescricaoDespesa = document.getElementById(
   "input__despesa__add--description"
 );
 
@@ -133,51 +212,20 @@ const editDescricaoDespesa = document.getElementById(
   "input__despesa__edit--description"
 );
 
-const tableDespesas = document.querySelector(".table--despesas");
-
-let despesas = [];
-
-// Renderizar tabela de despesas
-const displayDespesa = (despesas) => {
-  tableDespesas.innerHTML = "";
-  tableDespesas.innerHTML = `              
-    <tr>
-      <th>Valor</th>
-      <th>Categoria</th>
-      <th>Data</th>
-      <th>Ações</th>
-    </tr>
-    `;
-
-  despesas.forEach((despesa, i) => {
-    let newRow = document.querySelector(".table--despesas").insertRow();
-    newRow.innerHTML = `
-            <td class="despesa--${i}" >R$ ${despesa.valor}</td>
-            <td class="despesa--${i}">${despesa.categoria}</td>
-            <td class="despesa--${i}">${despesa.data}</td>
-            <td class="action__cell despesa--${i}">
-              <img class="despesa__edit action__icon" src="icons/pencil.svg"/>
-              <img class="despesa__delete action__icon" src="icons/close.svg"/>
-            </td>
-            `;
-  });
-  deleteDespesa();
-  editDespesa();
-};
-
 // Adicionar Despesa
 
 btnAddDespesa.addEventListener("click", (e) => {
   e.preventDefault();
+
   let despesa = {
-    valor: addValorDespesa.value,
-    categoria: addCategoriaDespesa.value,
-    data: addDataDespesa.value,
-    descricao: addDescricaoDespesa.value,
+    valor: inputAddValorDespesa.value,
+    categoria: inputAddCategoriaDespesa.value,
+    data: inputAddDataDespesa.value,
+    descricao: inputAddDescricaoDespesa.value,
   };
   despesas.push(despesa);
 
-  displayDespesa(despesas);
+  displayRow("despesas", "despesa", despesas);
   closeModal(modalAddDespesa);
 });
 
@@ -209,21 +257,81 @@ btnConfirmEditDespesa.addEventListener("click", (e) => {
   };
   despesas.splice(editDespesaId, 1, editedDespesa);
   closeModal(modalEditDespesa);
-  displayDespesa(despesas);
+  displayRow("despesas", "despesa", despesas);
 });
 
-// Deletar Despesa
+/*--- Receitas --- */
 
-const deleteDespesa = () => {
-  let deleteDespesaBtn = document.querySelectorAll(".despesa__delete");
-  deleteDespesaBtn.forEach((btn, i) => {
+// Add inputs
+const btnAddReceita = document.getElementById("btn--add--receita");
+const inputAddValorReceita = document.getElementById(
+  "input__receita__add--value"
+);
+const inputAddDataReceita = document.getElementById(
+  "input__receita__add--payment--date"
+);
+const inputAddCategoriaReceita = document.getElementById(
+  "input__receita__add--category"
+);
+const inputAddDescricaoReceita = document.getElementById(
+  "input__receita__add--description"
+);
+
+// Edit inputs
+const editValorReceita = document.getElementById("input__receita__edit--value");
+const editDataReceita = document.getElementById(
+  "input__receita__edit--payment--date"
+);
+const editCategoriaReceita = document.getElementById(
+  "input__receita__edit--category"
+);
+const editDescricaoReceita = document.getElementById(
+  "input__despesa__edit--description"
+);
+
+// Adicionar receita
+btnAddReceita.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  let receita = {
+    valor: inputAddValorReceita.value,
+    categoria: inputAddCategoriaReceita.value,
+    data: inputAddDataReceita.value,
+    descricao: inputAddDescricaoReceita.value,
+  };
+  receitas.push(receita);
+
+  displayRow("receitas", "receita", receitas);
+  closeModal(modalAddReceita);
+});
+
+// Editar despesa
+let editReceitaId;
+
+const editReceita = () => {
+  let editReceitaBtn = document.querySelectorAll(".receita__edit");
+  editReceitaBtn.forEach((btn, i) => {
     btn.onclick = () => {
-      despesas.splice(i, 1);
-      let cells = document.querySelectorAll(`.despesa--${i}`);
-      cells.forEach((cell) => {
-        cell.remove();
-      });
-      displayDespesa(despesas);
+      editReceitaId = i;
+      openModal(modalEditReceita);
+      editValorReceita.value = receitas[i].valor;
+      editDataReceita.value = receitas[i].data;
+      editCategoriaReceita.value = receitas[i].categoria;
+      editDescricaoReceita.value = receitas[i].descricao;
     };
   });
 };
+
+const btnConfirmEditReceita = document.getElementById("btn--edit--receita");
+btnConfirmEditReceita.addEventListener("click", (e) => {
+  e.preventDefault();
+  editedReceita = {
+    valor: editValorReceita.value,
+    categoria: editCategoriaReceita.value,
+    data: editDataReceita.value,
+    descricao: editDescricaoReceita.value,
+  };
+  receitas.splice(editReceitaId, 1, editedReceita);
+  closeModal(modalEditReceita);
+  displayRow("receitas", "receita", receitas);
+});
